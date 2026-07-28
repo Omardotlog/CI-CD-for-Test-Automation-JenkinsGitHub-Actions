@@ -9,7 +9,7 @@ pipeline {
                         docker {
                             image 'snakee/golang-junit:1.21'
                             reuseNode true
-                            args '-e GOCACHE=/tmp/go-cache -e GOMODCACHE=/tmp/go-mod -v go-build-cache:/tmp/go-cache -v go-mod-cache:/tmp/go-mod'
+                            args '-u 0 -e GOCACHE=/tmp/go-cache -e GOMODCACHE=/tmp/go-mod -v go-build-cache:/tmp/go-cache -v go-mod-cache:/tmp/go-mod'
                         }
                     }
 
@@ -40,7 +40,7 @@ pipeline {
                         docker {
                             image 'node:20-alpine'
                             reuseNode true
-                            args '-v npm-cache:/root/.npm'
+                            args '-u 0 -v npm-cache:/root/.npm'
                         }
                     }
 
