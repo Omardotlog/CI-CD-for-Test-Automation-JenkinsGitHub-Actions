@@ -13,10 +13,16 @@ pipeline {
 
             steps {
                 dir('bugtracker-backend') {
-                    sh 'go test -v ./...'
+                    sh 'go test -v ./... 2>&1 | go-junit-report > test-results.xml'
                 }
             }
-        } // <--- THIS WAS MISSING HERE
+
+            post {
+                always {
+                    junit 'bugtracker-backend/test-results.xml'
+                }
+            }
+        }
 
         stage('Unit Tests - Frontend') {
             agent {
@@ -34,7 +40,8 @@ pipeline {
                     '''
                 }
             }
-            post{
+
+            post {
                 always {
                     junit 'bugtracker-frontend/test-results.xml'
                 }
