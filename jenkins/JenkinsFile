@@ -14,10 +14,10 @@ pipeline {
             steps {
                 dir('bugtracker-backend') {
                     sh 'go test -v ./... 2>&1 | go-junit-report > test-results.xml'
-                    sh 'go test -coverprofile=coverage.out  -covermode=atomic ./...'
-                    sh 'go tool cover -html=coverage.html -o coverage.html'
+                    sh 'go test -coverprofile=coverage.out -covermode=atomic ./...'
+                    sh 'go tool cover -html=coverage.out -o coverage.html'
                     sh 'mkdir -p reports'
-                    sh 'mv coverage.html reports'
+                    sh 'mv coverage.html reports/'
                 }
             }
 
@@ -27,9 +27,7 @@ pipeline {
                     publishHTML target: [
                         reportDir: 'bugtracker-backend/reports',
                         reportFiles: 'coverage.html',
-                        reportName: 'Backend Coverage Report'
-                    ]
-
+                        reportName: 'Backend Coverage Report'                    ]
                 }
             }
         }
