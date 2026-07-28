@@ -1,16 +1,17 @@
 pipeline {
     agent any
+
     stages {
         stage('Unit Test - Backend') {
             agent {
                 docker {
-                    image 'jfrench/go-junit-report'
-                    reuseNode true               
-                    }
+                    image 'snakee/golang-junit'
+                    reuseNode true              
+                }
             }
             steps {
                 dir('bugtracker-backend') {
-                   sh 'go test -v ./...'
+                    sh 'go test -v ./...'
                 }
             }
         }
