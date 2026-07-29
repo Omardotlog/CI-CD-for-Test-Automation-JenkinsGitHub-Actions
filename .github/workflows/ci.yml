@@ -22,8 +22,13 @@ jobs:
         working-directory: ./bugtracker-backend
         run: |
           go install github.com/jstemmer/go-junit-report/v2@latest
-          go test -v ./... 2>&1 | "$(go env GOPATH)/bin/go-junit-report" > test-results.xml
-          go test -coverprofile=coverage.out -covermode=atomic ./...
+          go test -json -coverprofile=coverage.out -covermode=atomic ./... > test-output.json
+          go tool cover -func=coverage.out > coverage.txt
+          echo "## Go Test Coverage Report" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat coverage.txt >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat test-output.json | "$(go env GOPATH)/bin/go-junit-report" > test-results.xml
           go tool cover -html=coverage.out -o coverage.html
           mkdir -p reports
           mv coverage.html reports/
@@ -66,6 +71,11 @@ jobs:
         run: |
           npm ci
           npm test
+          echo "## Frontend Test Coverage Report" >> $GITHUB_STEP_SUMMARY
+          if [ -f coverage/lcov.info ]; then
+            echo '### Coverage Summary' >> $GITHUB_STEP_SUMMARY
+            echo 'Coverage report generated successfully' >> $GITHUB_STEP_SUMMARY
+          fi
           mkdir -p reports
           if [ -d coverage ]; then cp -R coverage reports/coverage; fi
 
