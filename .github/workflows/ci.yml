@@ -21,7 +21,30 @@ jobs:
       - name: Execute Backend Unit Tests
         working-directory: ./bugtracker-backend
         run: |
-          go test -v ./...
+          go install github.com/jstemmer/go-junit-report/v2@latest
+          go test -v ./... 2>&1 | "$(go env GOPATH)/bin/go-junit-report" > test-results.xml
+          go test -coverprofile=coverage.out -covermode=atomic ./...
+          go tool cover -html=coverage.out -o coverage.html
+          mkdir -p reports
+          mv coverage.html reports/
+
+      - name: Backend Test Results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Backend Unit Tests
+          path: ./bugtracker-backend/test-results.xml
+          reporter: java-junit
+
+      - name: Upload Backend Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-reports
+          path: |
+            ./bugtracker-backend/test-results.xml
+            ./bugtracker-backend/reports
+          if-no-files-found: ignore
 
   frontend-unit-tests:
     needs: backend-unit-tests
@@ -43,6 +66,8 @@ jobs:
         run: |
           npm ci
           npm test
+          mkdir -p reports
+          if [ -d coverage ]; then cp -R coverage reports/coverage; fi
 
       - name: Frontend Test Results
         uses: dorny/test-reporter@v1
@@ -51,3 +76,14 @@ jobs:
           name: Frontend Unit Tests
           path: ./bugtracker-frontend/test-results.xml
           reporter: jest-junit
+
+      - name: Upload Frontend Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-reports
+          path: |
+            ./bugtracker-frontend/test-results.xml
+            ./bugtracker-frontend/coverage
+            ./bugtracker-frontend/reports
+          if-no-files-found: ignore
