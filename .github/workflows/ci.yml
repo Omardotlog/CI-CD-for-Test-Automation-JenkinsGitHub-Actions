@@ -9,10 +9,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: "1.21"
           cache-dependency-path: |
@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -45,7 +45,7 @@ jobs:
           npm test
 
       - name: Frontend Test Results
-        uses: dorny/test-reporter@v1'=
+        uses: dorny/test-reporter@v1
         if: always()
         with:
           name: Frontend Unit Tests
