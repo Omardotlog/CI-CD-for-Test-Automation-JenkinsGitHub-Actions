@@ -35,7 +35,7 @@ jobs:
         with:
           node-version: "20"
           cache: "npm"
-          cashe-dependency-path: |
+          cache-dependency-path: |
             ./bugtracker-frontend/package-lock.json
 
       - name: Execute Frontend Unit Tests
